@@ -2,6 +2,7 @@ import WebSocket
 import Mouse
 import Json
 import Dict
+
 -- User land
 
 unconfirmed : Signal String
@@ -11,12 +12,11 @@ clean : String -> Element
 clean t = 
   (Json.fromString t)     >>= 
   -- (delve [ "x", "hash" ]) >>=
-  (delve [ "x", "inputs" ]) >>=
-  decodeList ((compute decodeStr) . delve [ "prev_out", "addr" ]) |>
-  cata justs [] |>
-  -- decodeList (\_ -> Just 42 ) |>
   -- decodeStr               |>
   -- getOrElse ""            |> 
+  (delve [ "x", "inputs" ]) >>=
+  decodeList ((delve [ "prev_out", "addr" ]) >=> decodeStr) |>
+  cata justs [] |>
   asText
 
 main = lift clean unconfirmed
@@ -64,6 +64,12 @@ compute f = cata f Nothing
 
 (>>=) : Maybe a -> (a -> Maybe b) -> Maybe b
 (>>=) = flip compute
+
+pipe : (a -> Maybe b) -> (b -> Maybe c) -> (a -> Maybe c)
+pipe f g = (\a -> f a >>= g)
+
+(>=>) : (a -> Maybe b) -> (b -> Maybe c) -> (a -> Maybe c)
+(>=>) = pipe
                    
 mmap : (a -> b) -> Maybe a -> Maybe b
 mmap f = compute (\a -> Just (f a))
