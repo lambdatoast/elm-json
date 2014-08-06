@@ -48,9 +48,6 @@ decodeList f v = case v of
                    Json.Array xs -> Just (map f xs)
                    _ -> Nothing
 
-getStr : String -> Json.Value -> Maybe String
-getStr n json = compute decodeStr (getProp n json)
-
 -- Maybe functions
 
 cata : (a -> b) -> b -> Maybe a -> b
