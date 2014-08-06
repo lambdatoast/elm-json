@@ -15,7 +15,7 @@ clean t =
   -- decodeStr               |>
   -- getOrElse ""            |> 
   (delve [ "x", "inputs" ]) >>=
-  decodeList ((delve [ "prev_out", "addr" ]) >=> decodeStr) |>
+  decodeList (delve [ "prev_out", "addr" ] >=> decodeStr) |>
   cata justs [] |>
   asText
 
@@ -33,7 +33,9 @@ reducejson xs mv = foldl (\f b -> compute f b) mv xs
 
 getProp : String -> Json.Value -> Maybe Json.Value
 getProp n json = case json of
-                  Json.Object d -> Just (Dict.getOrElse (Json.String "") n d)
+                  Json.Object d -> case (Dict.getOrElse Json.Null n d) of
+                                     Json.Null -> Nothing
+                                     v -> Just v
                   _ -> Nothing
 
 decodeStr : Json.Value -> Maybe String
