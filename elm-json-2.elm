@@ -10,9 +10,13 @@ unconfirmed = WebSocket.connect "ws://ws.blockchain.info/inv" (constant "{\"op\"
 clean : String -> Element
 clean t = 
   (Json.fromString t)     >>= 
-  (delve [ "x", "hash" ]) >>=
-  decodeStr               |>
-  getOrElse ""            |> 
+  -- (delve [ "x", "hash" ]) >>=
+  (delve [ "x", "inputs" ]) >>=
+  decodeList ((compute decodeStr) . delve [ "prev_out", "addr" ]) |>
+  cata justs [] |>
+  -- decodeList (\_ -> Just 42 ) |>
+  -- decodeStr               |>
+  -- getOrElse ""            |> 
   asText
 
 main = lift clean unconfirmed
@@ -37,23 +41,30 @@ decodeStr v = case v of
                 Json.String s -> Just s
                 _ -> Nothing
 
+decodeList : (Json.Value -> Maybe a) -> Json.Value -> Maybe [Maybe a]
+decodeList f v = case v of
+                   Json.Array xs -> Just (map f xs)
+                   _ -> Nothing
+
 getStr : String -> Json.Value -> Maybe String
 getStr n json = compute decodeStr (getProp n json)
 
+-- Maybe functions
+
+cata : (a -> b) -> b -> Maybe a -> b
+cata f b ma = case ma of
+                Just a  -> f a
+                Nothing -> b
+
 getOrElse : a -> Maybe a -> a
-getOrElse b ma = case ma of
-                 Just a -> a
-                 Nothing -> b
+getOrElse b = cata id b
                  
 compute : (a -> Maybe b) -> Maybe a -> Maybe b
-compute f ma = case ma of
-                   Just a -> f a
-                   _ -> Nothing
+compute f = cata f Nothing
 
 (>>=) : Maybe a -> (a -> Maybe b) -> Maybe b
 (>>=) = flip compute
                    
 mmap : (a -> b) -> Maybe a -> Maybe b
 mmap f = compute (\a -> Just (f a))
-
 
