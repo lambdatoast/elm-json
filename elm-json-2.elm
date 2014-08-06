@@ -9,10 +9,10 @@ unconfirmed = WebSocket.connect "ws://ws.blockchain.info/inv" (constant "{\"op\"
 
 clean : String -> Element
 clean t = 
-  (Json.fromString t) |> 
-  compute (delve [ "x", "hash" ]) |>
-  compute decodeStr             |>
-  getOrElse ""                  |>
+  (Json.fromString t)     >>= 
+  (delve [ "x", "hash" ]) >>=
+  decodeStr               |>
+  getOrElse ""            |> 
   asText
 
 main = lift clean unconfirmed
@@ -49,7 +49,11 @@ compute : (a -> Maybe b) -> Maybe a -> Maybe b
 compute f ma = case ma of
                    Just a -> f a
                    _ -> Nothing
+
+(>>=) : Maybe a -> (a -> Maybe b) -> Maybe b
+(>>=) = flip compute
                    
 mmap : (a -> b) -> Maybe a -> Maybe b
 mmap f = compute (\a -> Just (f a))
+
 
