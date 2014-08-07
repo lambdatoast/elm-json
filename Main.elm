@@ -1,5 +1,6 @@
 import Json
 import JsonCodec (..)
+import MaybeFunctions (cata, (>>=), (>=>))
 
 jsonex1 : String
 jsonex1 = "{\"name\":\"Jane\",\"msg\":\"Hello\"}"
