@@ -11,11 +11,11 @@ The main things this library provides are:
 
 ```haskell
 import JsonCodec.Decoder (..)
-import JsonCodec.Process (fromString, pluggedTo, interpretedWith)
+import JsonCodec.Process (fromString, pluggedTo)
 
 testdata1 = "{\"name\":\"Jane\",\"age\":47}"
 testdata2 = "{\"msg\":\"Hello\",\"author\":{\"name\":\"Jane\",\"age\":37,\"profession\":\"Aerospace Engineering\"}}"
-testdata3 = "[{\"name\":\"Xena\",\"age\":29,\"profession\":\"warrior\"},{\"name\":\"Tim\",\"age\":100,\"profession\":\"wizard\"}]"
+testdata3 = "[{\"name\":\"Xena\",\"age\":31,\"profession\":\"warrior\"},{\"name\":\"Tim\",\"age\":100,\"profession\":\"wizard\"}]"
 
 type Person = { name: String, age: Int, profession: String }
 type Message = { msg: String, author: Person }
