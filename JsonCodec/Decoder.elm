@@ -61,3 +61,5 @@ decodeList f v = case v of
                    Json.Array xs -> Success (map f xs)
                    _ -> Error <| decodeError "{list}"
 
+int : Decoder Int
+int = float `interpretedWith` floor

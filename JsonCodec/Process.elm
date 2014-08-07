@@ -11,8 +11,11 @@ cata f g pa = case pa of
 bind : (a -> Process b) -> Process a -> Process b
 bind f = cata f Error
 
+pluggedTo : Process a -> (a -> Process b) -> Process b
+pluggedTo = flip bind
+
 (>>=) : Process a -> (a -> Process b) -> Process b
-(>>=) = flip bind
+(>>=) = pluggedTo
 
 glue : (a -> Process b) -> (b -> Process c) -> (a -> Process c)
 glue f g = (\a -> f a >>= g)
@@ -20,8 +23,8 @@ glue f g = (\a -> f a >>= g)
 (>=>) : (a -> Process b) -> (b -> Process c) -> (a -> Process c)
 (>=>) = glue
 
-into : (a -> Process b) -> (b -> c) -> (a -> Process c)
-into f g = (\a -> f a >>= (\b -> Success <| g b))
+interpretedWith : (a -> Process b) -> (b -> c) -> (a -> Process c)
+interpretedWith f g = (\a -> f a >>= (\b -> Success <| g b))
 
 fromMaybe : Maybe a -> Process a
 fromMaybe ma = case ma of
