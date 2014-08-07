@@ -20,21 +20,21 @@ testdata2 = "{\"msg\":\"Hello\",\"author\":{\"name\":\"Jane\",\"age\":37,\"profe
 type Person = { name: String, age: Int, profession: String }
 type Message = { msg: String, author: Person }
 
-decodePerson : Decoder Person
-decodePerson = decode3 ("name", decodeStr) ("age", decodeFloat `into` floor) ("profession", decodeStr) Person
+person : Decoder Person
+person = decode3 ("name" := string) ("age" := float `into` floor) ("profession" := string) Person
 
-decodeMessage : Decoder Message
-decodeMessage = decode2 ("msg", decodeStr) ("author", decodePerson) Message
+message : Decoder Message
+message = decode2 ("msg" := string) ("author" := person) Message
 
 print : Decoder a -> String -> Element
 print decoder s = 
   fromString s >>= decoder |> asText
 
-main = flow down [ print decodePerson  testdata1    
-                 , print decodeMessage testdata2 ]
+main = flow down [ print person  testdata1    
+                 , print message testdata2 ]
 ```
 
-This outputs the following:
+This outputs these two texts:
 
-    Error ("Could not decode: \'profession\'")
-    Success { author = { age = 37, name = "Jane", profession = "Aerospace Engineering" }, msg = "Hello" }
+* `Error ("Could not decode: \'profession\'")`
+* `Success { author = { age = 37, name = "Jane", profession = "Aerospace Engineering" }, msg = "Hello" }`
