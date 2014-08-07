@@ -54,14 +54,14 @@ listOf f v = case v of
 
 decodeError n = "Could not decode: '" ++ n ++ "'"
 
-decode : NamedDec a -> (a -> b) -> Json.Value -> Process b
+decode : NamedDec a -> (a -> b) -> Decoder b
 decode (x,fa) g json = getProp x json >>= fa >>= (\a -> Success (g a))
 
-decode2 : NamedDec a -> NamedDec b -> (a -> b -> c) -> Json.Value -> Process c
+decode2 : NamedDec a -> NamedDec b -> (a -> b -> c) -> Decoder c
 decode2 (x,fa) (y,fb) g json =
   getProp x json >>= fa >>= (\a -> getProp y json >>= fb >>= (\b -> Success (g a b)))
 
-decode3 : NamedDec a -> NamedDec b -> NamedDec c -> (a -> b -> c -> d) -> Json.Value -> Process d
+decode3 : NamedDec a -> NamedDec b -> NamedDec c -> (a -> b -> c -> d) -> Decoder d
 decode3 (x,fa) (y,fb) (z,fc) g json =
   getProp x json >>= fa >>= (\a -> getProp y json >>= fb >>= 
                                    (\b -> getProp z json >>= fc >>= (\c -> Success (g a b c))))
