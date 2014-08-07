@@ -11,26 +11,27 @@ import Dict
 import Json
 import JsonCodec.Process (..)
 
-type JsonProcessor = Json.Value -> Output Json.Value
+type Accessor = Process Json.Value Json.Value
 
-reducejson : [JsonProcessor] -> Output Json.Value -> Output Json.Value
+accessorError : (String, Json.Value) -> Output Json.Value
+accessorError (n,v) = Error <| "Could not access a '" ++ n ++ "' in '" ++ (show v) ++ "'"
+
+reducejson : [Accessor] -> Output Json.Value -> Output Json.Value
 reducejson xs mv = foldl (\f b -> from f b) mv xs 
 
--- Accessors
-
-delve : [String] -> Json.Value -> Output Json.Value
+delve : [String] -> Accessor
 delve xs mv = reducejson (map getProp xs) (Success mv)
 
-getProp : String -> Json.Value -> Output Json.Value
+getProp : String -> Accessor
 getProp n json = case json of
                   Json.Object d -> case (Dict.getOrElse Json.Null n d) of
-                                     Json.Null -> Error <| decodeError n
+                                     Json.Null -> accessorError (n,json)
                                      v -> Success v
-                  _ -> Error <| decodeError n
+                  _ -> accessorError (n,json)
   
 -- Types
 
-type Decoder a = Json.Value -> Output a
+type Decoder a = Process Json.Value a
 data NamedDec a = NDec String (Decoder a)
 
 (:=) : String -> Decoder a -> NamedDec a
