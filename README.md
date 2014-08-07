@@ -38,7 +38,8 @@ main = flow down [ print person  testdata1
                  , print people testdata3 ]
 ```
 
-This outputs these two texts:
+This outputs these messages:
 
 * `Error ("Could not decode: \'profession\'")`
 * `Success { author = { age = 37, name = "Jane", profession = "Aerospace Engineering" }, msg = "Hello" }`
+* `Success ([{ age = 100, name = "Tim", profession = "wizard" },{ age = 29, name = "Xena", profession = "warrior" }])`
