@@ -1,5 +1,4 @@
-# Elm JSON
-
+# Elm Json Codec
 
 Convenient and composable translation between JSON and Elm types.
 
