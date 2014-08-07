@@ -20,6 +20,11 @@ getProp n json = case json of
                                      v -> Success v
                   _ -> Error <| decodeError n
   
+-- Types
+
+type Decoder a = Json.Value -> Process a
+type NamedDec a = (String, Decoder a)
+
 (:=) : String -> Decoder a -> NamedDec a
 (:=) k d = (k, d)
 
@@ -40,15 +45,12 @@ float v = case v of
 int : Decoder Int
 int = float `interpretedWith` floor
 
-decodeList : (Json.Value -> Process a) -> Json.Value -> Process [Process a]
-decodeList f v = case v of
-                   Json.Array xs -> Success (map f xs)
+listOf : Decoder a -> Decoder [a]
+listOf f v = case v of
+                   Json.Array xs -> Success <| successes (map f xs)
                    _ -> Error <| decodeError "{list}"
 
 -- Generic decoders
-
-type Decoder a = Json.Value -> Process a
-type NamedDec a = (String, Decoder a)
 
 decodeError n = "Could not decode: '" ++ n ++ "'"
 

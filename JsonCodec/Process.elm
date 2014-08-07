@@ -26,6 +26,9 @@ glue f g = (\a -> f a >>= g)
 interpretedWith : (a -> Process b) -> (b -> c) -> (a -> Process c)
 interpretedWith f g = (\a -> f a >>= (\b -> Success <| g b))
 
+successes : [Process a] -> [a]
+successes xs = foldl (\a b -> cata (\s -> [s] ++ b) (\_ -> b) a) [] xs
+
 fromMaybe : Maybe a -> Process a
 fromMaybe ma = case ma of
                  Just a  -> Success a
