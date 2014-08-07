@@ -38,8 +38,8 @@ main = flow down [ print person  testdata1
                  , print (listOf bool) testdata3 ]
 ```
 
-This outputs these messages:
+This renders the following:
 
-* `Error ("Could not decode: \'profession\'")`
-* `Success { comments = [{ author = { age = 37, name = "Tim", profession = "Wizard" }, msg = "Hello" },{ author = { age = 37, name = "Jane", profession = "Aerospace Engineering" }, msg = "Hello" }], content = "hello world" }`
-* `Success [False,True]`
+    Error ("Could not decode: \'profession\'")
+    Success { comments = [{ author = { age = 37, name = "Jane", profession = "Aerospace Engineering" }, msg = "Hello" },{ author = { age = 37, name = "Tim", profession = "Wizard" }, msg = "Hello" }], content = "hello world" }
+    Success [True,False]
