@@ -45,6 +45,11 @@ float v = case v of
 int : Decoder Int
 int = float `interpretedWith` floor
 
+bool : Decoder Bool
+bool v = case v of
+                  Json.Boolean b -> Success b
+                  _ -> Error <| decodeError "{bool}"
+
 listOf : Decoder a -> Decoder [a]
 listOf f v = case v of
                    Json.Array xs -> Success <| successes (map f xs)
