@@ -23,10 +23,10 @@ getProp n json = case json of
 -- Types
 
 type Decoder a = Json.Value -> Process a
-type NamedDec a = (String, Decoder a)
+data NamedDec a = NDec String (Decoder a)
 
 (:=) : String -> Decoder a -> NamedDec a
-(:=) k d = (k, d)
+(:=) k d = NDec k d
 
 infixr 0 :=
 
@@ -60,14 +60,14 @@ listOf f v = case v of
 decodeError n = "Could not decode: '" ++ n ++ "'"
 
 decode : NamedDec a -> (a -> b) -> Decoder b
-decode (x,fa) g json = getProp x json >>= fa >>= (\a -> Success (g a))
+decode (NDec x fa) g json = getProp x json >>= fa >>= (\a -> Success (g a))
 
 decode2 : NamedDec a -> NamedDec b -> (a -> b -> c) -> Decoder c
-decode2 (x,fa) (y,fb) g json =
+decode2 (NDec x fa) (NDec y fb) g json =
   getProp x json >>= fa >>= (\a -> getProp y json >>= fb >>= (\b -> Success (g a b)))
 
 decode3 : NamedDec a -> NamedDec b -> NamedDec c -> (a -> b -> c -> d) -> Decoder d
-decode3 (x,fa) (y,fb) (z,fc) g json =
+decode3 (NDec x fa) (NDec y fb) (NDec z fc) g json =
   getProp x json >>= fa >>= (\a -> getProp y json >>= fb >>= 
                                    (\b -> getProp z json >>= fc >>= (\c -> Success (g a b c))))
 
