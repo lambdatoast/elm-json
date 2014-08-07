@@ -7,7 +7,7 @@ The main things this library provides are:
 * Functions for creating composable and extensible JSON codecs
 * Functions for delving into the parts of a JSON that you care about.
 
-## Examples
+## Decoding example
 
 ```haskell
 import JsonCodec.Decoder (..)
