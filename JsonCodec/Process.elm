@@ -1,8 +1,23 @@
 module JsonCodec.Process where
 import Json
 
-data Process a = Error String | Success a
+{-| A Process represents what's going on with a codec.
 
+# Type and Constructors
+@docs Process
+
+# Working with Processes
+@docs cata
+
+-}
+
+data Process a = Success a | Error String
+
+{-| Run the first given function if success, otherwise, the second given function.
+
+      isRightAnswer : Process Int -> Bool
+      isRightAnswer p = cata (\n -> n > 0) (\_ -> False) p
+-}
 cata : (a -> b) -> (String -> b) -> Process a -> b
 cata f g pa = case pa of
                 Success a  -> f a
