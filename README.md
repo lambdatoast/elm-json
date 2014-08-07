@@ -35,5 +35,6 @@ main = flow down [ print decodePerson  testdata1
 ```
 
 This outputs the following:
+
     Error ("Could not decode: \'profession\'")
     Success { author = { age = 37, name = "Jane", profession = "Aerospace Engineering" }, msg = "Hello" }
