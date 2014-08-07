@@ -11,7 +11,7 @@ The main things this library provides are:
 
 ```haskell
 import JsonCodec.Decoder (..)
-import JsonCodec.Process (fromString, pluggedTo)
+import JsonCodec.Process (fromString, into)
 
 type Person = { name: String, age: Int, profession: String }
 type Comment = { msg: String, author: Person }
@@ -35,7 +35,7 @@ testdata2 = "{\"content\":\"hello world\",\"comments\":[{\"msg\":\"Hello\",\"aut
 testdata3 = "[true,false]"
 
 print : Decoder a -> String -> Element
-print decoder s = fromString s `pluggedTo` decoder |> asText
+print decoder s = fromString s `into` decoder |> asText
 
 main = flow down [ print person  testdata1    
                  , print blogpost testdata2

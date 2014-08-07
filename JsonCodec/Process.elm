@@ -23,14 +23,19 @@ cata f g pa = case pa of
                 Success a  -> f a
                 Error s -> g s
 
-bind : (a -> Process b) -> Process a -> Process b
-bind f = cata f Error
+{-| Run the first given function if success, otherwise, the second given function.
 
-pluggedTo : Process a -> (a -> Process b) -> Process b
-pluggedTo = flip bind
+      isRightAnswer : Process Int -> Bool
+      isRightAnswer p = cata (\n -> n == 42) (\_ -> False) p
+-}
+from : (a -> Process b) -> Process a -> Process b
+from f = cata f Error
+
+into : Process a -> (a -> Process b) -> Process b
+into = flip from
 
 (>>=) : Process a -> (a -> Process b) -> Process b
-(>>=) = pluggedTo
+(>>=) = into
 
 glue : (a -> Process b) -> (b -> Process c) -> (a -> Process c)
 glue f g = (\a -> f a >>= g)
