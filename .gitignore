@@ -1,0 +1,8 @@
+*~
+.swp
+.DS_Store
+elm/cache/
+elm/build/
+elm_dependencies
+cache
+build

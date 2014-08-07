@@ -1,27 +1,6 @@
-import WebSocket
-import Mouse
+module JsonCodec where
 import Json
 import Dict
-
--- User land
-
-unconfirmed : Signal String
-unconfirmed = WebSocket.connect "ws://ws.blockchain.info/inv" (constant "{\"op\":\"unconfirmed_sub\"}")
-
-clean : String -> Element
-clean t = 
-  (Json.fromString t)     >>= 
-  -- (delve [ "x", "hash" ]) >>=
-  -- decodeStr               |>
-  -- getOrElse ""            |> 
-  (delve [ "x", "inputs" ]) >>=
-  decodeList (delve [ "prev_out", "addr" ] >=> decodeStr) |>
-  cata justs [] |>
-  asText
-
-main = lift clean unconfirmed
-
--- Library land
 
 type JsonProcessor = Json.Value -> Maybe Json.Value
 
@@ -72,4 +51,5 @@ pipe f g = (\a -> f a >>= g)
                    
 mmap : (a -> b) -> Maybe a -> Maybe b
 mmap f = compute (\a -> Just (f a))
+
 
