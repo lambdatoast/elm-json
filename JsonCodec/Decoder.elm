@@ -39,15 +39,20 @@ decode3 (x,fa) (y,fb) (z,fc) g json =
   getProp x json >>= fa >>= (\a -> getProp y json >>= fb >>= 
                                    (\b -> getProp z json >>= fc >>= (\c -> Success (g a b c))))
 
+(:=) : String -> Decoder a -> NamedDec a
+(:=) k d = (k, d)
+
+infixr 0 :=
+
 -- Built-in decoders for convenience
 
-decodeStr : Decoder String
-decodeStr v = case v of
+string : Decoder String
+string v = case v of
                 Json.String s -> Success s
                 _ -> Error <| decodeError "{string}"
 
-decodeFloat : Decoder Float
-decodeFloat v = case v of
+float : Decoder Float
+float v = case v of
                   Json.Number n -> Success n
                   _ -> Error <| decodeError "{float}"
 
