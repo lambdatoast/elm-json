@@ -13,13 +13,11 @@ The main things this library provides are:
 import JsonCodec.Decoder (..)
 import JsonCodec.Process (fromString, pluggedTo)
 
-testdata1 = "{\"name\":\"Jane\",\"age\":47}"
-testdata2 = "{\"content\":\"hello world\",\"comments\":[{\"msg\":\"Hello\",\"author\":{\"name\":\"Jane\",\"age\":37,\"profession\":\"Aerospace Engineering\"}},{\"msg\":\"Hello\",\"author\":{\"name\":\"Tim\",\"age\":37,\"profession\":\"Wizard\"}}]}"
-testdata3 = "[true,false]"
-
 type Person = { name: String, age: Int, profession: String }
 type Comment = { msg: String, author: Person }
 type BlogPost = { content: String, comments: [Comment] }
+
+-- Design the decoders
 
 person : Decoder Person
 person = decode3 ("name" := string) ("age" := int) ("profession" := string) Person
@@ -29,6 +27,12 @@ comment = decode2 ("msg" := string) ("author" := person) Comment
 
 blogpost : Decoder BlogPost
 blogpost = decode2 ("content" := string) ("comments" := listOf comment) BlogPost
+
+-- Example data
+
+testdata1 = "{\"name\":\"Jane\",\"age\":47}"
+testdata2 = "{\"content\":\"hello world\",\"comments\":[{\"msg\":\"Hello\",\"author\":{\"name\":\"Jane\",\"age\":37,\"profession\":\"Aerospace Engineering\"}},{\"msg\":\"Hello\",\"author\":{\"name\":\"Tim\",\"age\":37,\"profession\":\"Wizard\"}}]}"
+testdata3 = "[true,false]"
 
 print : Decoder a -> String -> Element
 print decoder s = fromString s `pluggedTo` decoder |> asText
