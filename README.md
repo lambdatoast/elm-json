@@ -14,31 +14,29 @@ import JsonCodec.Decoder (..)
 import JsonCodec.Process (fromString, pluggedTo)
 
 testdata1 = "{\"name\":\"Jane\",\"age\":47}"
-testdata2 = "{\"msg\":\"Hello\",\"author\":{\"name\":\"Jane\",\"age\":37,\"profession\":\"Aerospace Engineering\"}}"
-testdata3 = "[{\"name\":\"Xena\",\"age\":31,\"profession\":\"warrior\"},{\"name\":\"Tim\",\"age\":100,\"profession\":\"wizard\"}]"
+testdata2 = "{\"content\":\"hello world\",\"comments\":[{\"msg\":\"Hello\",\"author\":{\"name\":\"Jane\",\"age\":37,\"profession\":\"Aerospace Engineering\"}},{\"msg\":\"Hello\",\"author\":{\"name\":\"Tim\",\"age\":37,\"profession\":\"Wizard\"}}]}"
 
 type Person = { name: String, age: Int, profession: String }
-type Message = { msg: String, author: Person }
+type Comment = { msg: String, author: Person }
+type BlogPost = { content: String, comments: [Comment] }
 
 person : Decoder Person
 person = decode3 ("name" := string) ("age" := int) ("profession" := string) Person
 
-message : Decoder Message
-message = decode2 ("msg" := string) ("author" := person) Message
+comment : Decoder Comment
+comment = decode2 ("msg" := string) ("author" := person) Comment
 
-people : Decoder [Person]
-people = listOf person
+blogpost : Decoder BlogPost
+blogpost = decode2 ("content" := string) ("comments" := listOf comment) BlogPost
 
 print : Decoder a -> String -> Element
 print decoder s = fromString s `pluggedTo` decoder |> asText
 
 main = flow down [ print person  testdata1    
-                 , print message testdata2
-                 , print people testdata3 ]
+                 , print blogpost testdata2 ]
 ```
 
 This outputs these messages:
 
 * `Error ("Could not decode: \'profession\'")`
-* `Success { author = { age = 37, name = "Jane", profession = "Aerospace Engineering" }, msg = "Hello" }`
-* `Success ([{ age = 100, name = "Tim", profession = "wizard" },{ age = 29, name = "Xena", profession = "warrior" }])`
+* `Success { comments = [{ author = { age = 37, name = "Tim", profession = "Wizard" }, msg = "Hello" },{ author = { age = 37, name = "Jane", profession = "Aerospace Engineering" }, msg = "Hello" }], content = "hello world" }`
