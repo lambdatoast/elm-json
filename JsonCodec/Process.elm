@@ -16,7 +16,7 @@ data Process a = Success a | Error String
 {-| Run the first given function if success, otherwise, the second given function.
 
       isRightAnswer : Process Int -> Bool
-      isRightAnswer p = cata (\n -> n > 0) (\_ -> False) p
+      isRightAnswer p = cata (\n -> n == 42) (\_ -> False) p
 -}
 cata : (a -> b) -> (String -> b) -> Process a -> b
 cata f g pa = case pa of
