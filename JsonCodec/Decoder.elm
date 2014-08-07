@@ -3,17 +3,17 @@ import Dict
 import Json
 import JsonCodec.Process (..)
 
-type JsonProcessor = Json.Value -> Process Json.Value
+type JsonProcessor = Json.Value -> Output Json.Value
 
-reducejson : [JsonProcessor] -> Process Json.Value -> Process Json.Value
-reducejson xs mv = foldl (\f b -> bind f b) mv xs 
+reducejson : [JsonProcessor] -> Output Json.Value -> Output Json.Value
+reducejson xs mv = foldl (\f b -> from f b) mv xs 
 
 -- Accessors
 
-delve : [String] -> Json.Value -> Process Json.Value
+delve : [String] -> Json.Value -> Output Json.Value
 delve xs mv = reducejson (map getProp xs) (Success mv)
 
-getProp : String -> Json.Value -> Process Json.Value
+getProp : String -> Json.Value -> Output Json.Value
 getProp n json = case json of
                   Json.Object d -> case (Dict.getOrElse Json.Null n d) of
                                      Json.Null -> Error <| decodeError n
@@ -22,7 +22,7 @@ getProp n json = case json of
   
 -- Types
 
-type Decoder a = Json.Value -> Process a
+type Decoder a = Json.Value -> Output a
 data NamedDec a = NDec String (Decoder a)
 
 (:=) : String -> Decoder a -> NamedDec a
