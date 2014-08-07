@@ -1,4 +1,12 @@
 module JsonCodec.Decoder where
+
+{-| A Decoder translates JSON to Elm types.
+
+# Type and Constructors
+@docs Decoder, fromString
+
+-}
+
 import Dict
 import Json
 import JsonCodec.Process (..)
@@ -54,6 +62,14 @@ listOf : Decoder a -> Decoder [a]
 listOf f v = case v of
                    Json.Array xs -> Success <| successes (map f xs)
                    _ -> Error <| decodeError "{list}"
+
+{-| A Process from String to Json.Value for convenience.
+
+      isRightAnswer : String -> Output Bool
+      isRightAnswer s = fromString s >>= int >>= (\n -> Success <| n == 42)
+-}
+fromString : Process String Json.Value
+fromString = (\s -> fromMaybe (Json.fromString s))
 
 -- Generic decoders
 

@@ -1,15 +1,19 @@
 module JsonCodec.Process where
-import Json
 
 {-| A Process represents what's going on with a codec.
 
 # Type and Constructors
 @docs Process
 
-# Working with Processes
-@docs cata
+# Working with Output
+@docs cata, successes, fromMaybe
+
+# Composing Processes
+@docs from, into, (>>=), glue, (>>>), interpretedWith
 
 -}
+
+import Json
 
 data Output a = Success a | Error String
 type Process a b = a -> Output b
@@ -24,32 +28,69 @@ cata f g pa = case pa of
                 Success a  -> f a
                 Error s -> g s
 
+{-| Get an `Output b` from passing an `Output a` through a `Process a b`.
+
+      isRightAnswer : Output Int -> Output Bool
+      isRightAnswer o = (\n -> Success <| n == 42) `from` o
+-}
 from : Process a b -> Output a -> Output b
 from f = cata f Error
 
+{-| Same as `from`, but with the arguments interchanged.
+
+      isRightAnswer : Output Int -> Output Bool
+      isRightAnswer o = o `into` (\n -> Success <| n == 42)
+-}
 into : Output a -> Process a b -> Output b
 into = flip from
 
+{-| Alias for `into`.
+
+      isRightAnswer : Output Int -> Output Bool
+      isRightAnswer o = o >>= (\n -> Success <| n == 42)
+-}
 (>>=) : Output a -> Process a b -> Output b
 (>>=) = into
 
+{-| Compose two Processes.
+
+      isRightAnswer : Process [a] Bool
+      isRightAnswer = (\xs -> Success <| length xs) `glue` (\n -> Success <| n == 42)
+-}
 glue : Process a b -> Process b c -> Process a c
 glue f g = (\a -> f a >>= g)
 
-(>=>) : Process a b -> Process b c -> Process a c
-(>=>) = glue
+{-| Alias for `glue`.
 
+      isRightAnswer : Process [a] Bool
+      isRightAnswer = (\xs -> Success <| length xs) >>> (\n -> Success <| n == 42)
+-}
+(>>>) : Process a b -> Process b c -> Process a c
+(>>>) = glue
+
+{-| Adds a pure transformation to the output of a Process.
+
+      isRightAnswer : Process Int Bool
+      isRightAnswer = (\n -> Success n) `interpretedWith` ((==) 42)
+-}
 interpretedWith : Process a b -> (b -> c) -> Process a c
 interpretedWith f g = (\a -> f a >>= (\b -> Success <| g b))
 
+{-| Collect the successfully computed values.
+
+      rightAnswers : [Output Int] -> [Int]
+      rightAnswers xs = successes xs |> filter ((==) 42)
+-}
 successes : [Output a] -> [a]
 successes xs = foldl (\a b -> cata (\s -> b ++ [s]) (\_ -> b) a) [] xs
 
+{-| Construct an `Output` from a `Maybe`.
+
+      isRightAnswer : Maybe Int -> Output Bool
+      isRightAnswer m = fromMaybe m >>= (\n -> Success <| n == 42)
+-}
 fromMaybe : Maybe a -> Output a
 fromMaybe ma = case ma of
                  Just a  -> Success a
                  Nothing -> Error "Nothing"
-
-fromString : String -> Output Json.Value
-fromString s = fromMaybe (Json.fromString s)
 
