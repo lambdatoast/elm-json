@@ -48,6 +48,7 @@ main = flow down [ print person  testdata1         -- Error ("Could not decode: 
 ### Creating accessors and composing them with decoders
 
 ```haskell
+import JsonCodec.Accessor (delve)
 import JsonCodec.Decoder (..)
 import JsonCodec.Process (fromString, into, glue)
 
