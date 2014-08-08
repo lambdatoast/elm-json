@@ -1,4 +1,4 @@
-module JsonCodec.Output  where
+module Json.Output  where
 
 {-| Representation of output.
 

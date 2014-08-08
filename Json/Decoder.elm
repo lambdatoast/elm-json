@@ -1,4 +1,4 @@
-module JsonCodec.Decoder where
+module Json.Decoder where
 
 {-| Tools for translating JSON to Elm types.
 
@@ -9,9 +9,9 @@ module JsonCodec.Decoder where
 
 import List
 import Json
-import JsonCodec.Process (..)
-import JsonCodec.Output (fromMaybe, Success, Error, successes)
-import JsonCodec.Accessor (..)
+import Json.Process (..)
+import Json.Output (fromMaybe, Success, Error, successes)
+import Json.Accessor (..)
 
 {-| A Decoder is a Process that takes a Json.Value and produces some 
 value `a`.

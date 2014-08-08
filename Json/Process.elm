@@ -1,4 +1,4 @@
-module JsonCodec.Process where
+module Json.Process where
 
 {-| A Process represents a passing from some input to a special `Output`.
 
@@ -11,7 +11,7 @@ module JsonCodec.Process where
 -}
 
 import Json
-import JsonCodec.Output (..)
+import Json.Output (..)
 
 type Process a b = a -> Output b
 

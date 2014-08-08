@@ -1,4 +1,4 @@
-module JsonCodec.Accessor (delve, getVal) where
+module Json.Accessor (delve, getVal) where
 
 {-| An accesor is a `Process` that is used for moving through the Json 
 structure. Accessors and decoders are both processes, so they automatically 
@@ -12,8 +12,8 @@ compose.
 import Dict
 import List
 import Json
-import JsonCodec.Process (..)
-import JsonCodec.Output (..)
+import Json.Process (..)
+import Json.Output (..)
 
 {-| An accesor is an endo-`Process` that is used for moving through the Json 
 structure.
