@@ -7,6 +7,7 @@ module JsonCodec.Decoder where
 
 -}
 
+import List
 import Json
 import JsonCodec.Process (..)
 import JsonCodec.Output (fromMaybe, Success, Error, successes)
@@ -47,7 +48,7 @@ float v = case v of
                   _ -> Error <| decoderErrorMsg "{float}"
 
 int : Decoder Int
-int = float `interpretedWith` floor
+int = float `mappedTo` floor
 
 bool : Decoder Bool
 bool v = case v of
@@ -56,7 +57,7 @@ bool v = case v of
 
 listOf : Decoder a -> Decoder [a]
 listOf f v = case v of
-                   Json.Array xs -> Success <| successes (map f xs)
+                   Json.Array xs -> Success <| successes (List.map f xs)
                    _ -> Error <| decoderErrorMsg "{list}"
 
 {-| A Process from String to Json.Value for convenience.

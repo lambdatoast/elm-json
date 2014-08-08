@@ -6,7 +6,7 @@ module JsonCodec.Process where
 @docs Process
 
 # Composing Processes
-@docs from, into, (>>=), glue, (>>>), interpretedWith
+@docs from, into, (>>=), glue, (>>>), mappedTo
 
 -}
 
@@ -58,10 +58,18 @@ glue f g = (\a -> f a >>= g)
 {-| Adds a pure transformation to the output of a Process.
 
       isRightAnswer : Process Int Bool
-      isRightAnswer = (\n -> Success n) `interpretedWith` ((==) 42)
+      isRightAnswer = map ((==) 42) (\n -> Success n)
 -}
-interpretedWith : Process a b -> (b -> c) -> Process a c
-interpretedWith f g = (\a -> f a >>= (\b -> Success <| g b))
+map : (b -> c) -> Process a b -> Process a c
+map f p = (\a -> p a >>= (\b -> Success (f b)))
+
+{-| Same as `map`, but with the arguments interchanged.
+
+      isRightAnswer : Process Int Bool
+      isRightAnswer = (\n -> Success n) `mappedTo` ((==) 42)
+-}
+mappedTo : Process a b -> (b -> c) -> Process a c
+mappedTo = flip map
 
 {-| Collapse a list of endo-Processes, from the left.
 

@@ -10,6 +10,7 @@ compose.
 -}
 
 import Dict
+import List
 import Json
 import JsonCodec.Process (..)
 import JsonCodec.Output (..)
@@ -34,7 +35,7 @@ type PropertyName = String
       isRightAnswer = delve [ "x", "y", "z" ] `glue` int `glue` (Success . ((==) 42))
 -}
 delve : [PropertyName] -> Accessor
-delve xs mv = collapsel (Success mv) (map getVal xs)
+delve xs mv = collapsel (Success mv) (List.map getVal xs)
 
 {-| Get the value of the property by the given name.
 -}
