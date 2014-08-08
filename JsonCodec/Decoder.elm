@@ -1,6 +1,6 @@
 module JsonCodec.Decoder where
 
-{-| A Decoder translates JSON to Elm types.
+{-| Tools for translating JSON to Elm types.
 
 # Type and Constructors
 @docs Decoder, fromString
@@ -11,16 +11,19 @@ import Dict
 import Json
 import JsonCodec.Process (..)
 
+{-| This Process is used for moving through the Json structure. Accessors 
+and decoders are both processes, so they automatically compose.
+-}
 type Accessor = Process Json.Value Json.Value
 
+{-| Create an Error to communicate that a property of key `k` could 
+not be accessed in the `Json.Value` `v`.
+-}
 accessorError : (String, Json.Value) -> Output Json.Value
-accessorError (n,v) = Error <| "Could not access a '" ++ n ++ "' in '" ++ (show v) ++ "'"
-
-reducejson : [Accessor] -> Output Json.Value -> Output Json.Value
-reducejson xs mv = foldl (\f b -> from f b) mv xs 
+accessorError (k,v) = Error <| "Could not access a '" ++ k ++ "' in '" ++ (show v) ++ "'"
 
 delve : [String] -> Accessor
-delve xs mv = reducejson (map getProp xs) (Success mv)
+delve xs mv = collapsel (Success mv) (map getProp xs)
 
 getProp : String -> Accessor
 getProp n json = case json of
@@ -29,12 +32,20 @@ getProp n json = case json of
                                      v -> Success v
                   _ -> accessorError (n,json)
   
--- Types
-
+{-| A Decoder is a Process that takes a Json.Value and produces some 
+value `a`.
+-}
 type Decoder a = Process Json.Value a
-data NamedDec a = NDec String (Decoder a)
 
-(:=) : String -> Decoder a -> NamedDec a
+{-| A Decoder tagged with a property name, expected to be found in 
+a Json.Value.
+-}
+type PropertyName = String
+data NamedDec a = NDec PropertyName (Decoder a)
+
+{-| Constructor of decoders with a name.
+-}
+(:=) : PropertyName -> Decoder a -> NamedDec a
 (:=) k d = NDec k d
 
 infixr 0 :=
