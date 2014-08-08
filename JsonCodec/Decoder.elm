@@ -3,42 +3,14 @@ module JsonCodec.Decoder where
 {-| Tools for translating JSON to Elm types.
 
 # Type and Constructors
-@docs Decoder, fromString
+@docs Decoder, fromString, (:=)
 
 -}
 
-import Dict
 import Json
 import JsonCodec.Process (..)
+import JsonCodec.Accessor (..)
 
-{-| This Process is used for moving through the Json structure. Accessors 
-and decoders are both processes, so they automatically compose.
--}
-type Accessor = Process Json.Value Json.Value
-
-{-| Create an Error to communicate that a property of key `k` could 
-not be accessed in the `Json.Value` `v`.
--}
-accessorError : (String, Json.Value) -> Output Json.Value
-accessorError (k,v) = Error <| "Could not access a '" ++ k ++ "' in '" ++ (show v) ++ "'"
-
-{-| Given a list of property names, traverse the `Json.Object`.
-
-      isRightAnswer : Decoder Bool
-      isRightAnswer = delve [ "x", "y", "z" ] `glue` int `glue` (Success . ((==) 42))
--}
-delve : [PropertyName] -> Accessor
-delve xs mv = collapsel (Success mv) (map getProp xs)
-
-{-| Get the value of the property by the given name.
--}
-getProp : PropertyName -> Accessor
-getProp n json = case json of
-                  Json.Object d -> case (Dict.getOrElse Json.Null n d) of
-                                     Json.Null -> accessorError (n,json)
-                                     v -> Success v
-                  _ -> accessorError (n,json)
-  
 {-| A Decoder is a Process that takes a Json.Value and produces some 
 value `a`.
 -}
@@ -47,7 +19,6 @@ type Decoder a = Process Json.Value a
 {-| A Decoder tagged with a property name, expected to be found in 
 a Json.Value.
 -}
-type PropertyName = String
 data NamedDec a = NDec PropertyName (Decoder a)
 
 {-| Constructor of decoders with a name.
@@ -95,7 +66,7 @@ listOf f v = case v of
 fromString : Process String Json.Value
 fromString = (\s -> fromMaybe (Json.fromString s))
 
--- Generic decoders
+-- Generic decoder --
 
 decode : NamedDec a -> (a -> b) -> Decoder b
 decode (NDec x fa) g json = getProp x json >>= fa >>= (\a -> Success (g a))
