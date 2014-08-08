@@ -1,4 +1,4 @@
-# Elm Json Codec
+# JSON in Elm
 
 Convenient and composable translation between JSON and Elm types, with helpful error messages.
 
@@ -12,8 +12,8 @@ The main use cases of this library are:
 ### Creating and composing decoders
 
 ```haskell
-import JsonCodec.Decoder (..)
-import JsonCodec.Process (fromString, into)
+import Json.Decoder (..)
+import Json.Process (fromString, into)
 
 type Person = { name: String, age: Int, profession: String }
 type Comment = { msg: String, author: Person }
@@ -48,9 +48,9 @@ main = flow down [ print person  testdata1         -- Error ("Could not decode: 
 ### Creating accessors and composing them with decoders
 
 ```haskell
-import JsonCodec.Accessor (delve)
-import JsonCodec.Decoder (..)
-import JsonCodec.Process (fromString, into, glue)
+import Json.Accessor (delve)
+import Json.Decoder (..)
+import Json.Process (fromString, into, glue)
 
 type Person = { name: String, age: Int, profession: String }
 
