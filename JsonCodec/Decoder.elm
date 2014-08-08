@@ -9,6 +9,7 @@ module JsonCodec.Decoder where
 
 import Json
 import JsonCodec.Process (..)
+import JsonCodec.Output (fromMaybe, Success, Error, successes)
 import JsonCodec.Accessor (..)
 
 {-| A Decoder is a Process that takes a Json.Value and produces some 

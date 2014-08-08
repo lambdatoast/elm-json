@@ -12,6 +12,7 @@ compose.
 import Dict
 import Json
 import JsonCodec.Process (..)
+import JsonCodec.Output (..)
 
 type Accessor = Process Json.Value Json.Value
 
