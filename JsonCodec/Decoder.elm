@@ -50,17 +50,20 @@ data NamedDec a = NDec PropertyName (Decoder a)
 
 infixr 0 :=
 
--- Built-in decoders for convenience
+-- Built-in decoders for convenience --
+
+decoderErrorMsg : String -> String
+decoderErrorMsg s = "Could not decode: '" ++ s ++ "'"
 
 string : Decoder String
 string v = case v of
                 Json.String s -> Success s
-                _ -> Error <| decodeError "{string}"
+                _ -> Error <| decoderErrorMsg "{string}"
 
 float : Decoder Float
 float v = case v of
                   Json.Number n -> Success n
-                  _ -> Error <| decodeError "{float}"
+                  _ -> Error <| decoderErrorMsg "{float}"
 
 int : Decoder Int
 int = float `interpretedWith` floor
@@ -68,12 +71,12 @@ int = float `interpretedWith` floor
 bool : Decoder Bool
 bool v = case v of
                   Json.Boolean b -> Success b
-                  _ -> Error <| decodeError "{bool}"
+                  _ -> Error <| decoderErrorMsg "{bool}"
 
 listOf : Decoder a -> Decoder [a]
 listOf f v = case v of
                    Json.Array xs -> Success <| successes (map f xs)
-                   _ -> Error <| decodeError "{list}"
+                   _ -> Error <| decoderErrorMsg "{list}"
 
 {-| A Process from String to Json.Value for convenience.
 
@@ -84,8 +87,6 @@ fromString : Process String Json.Value
 fromString = (\s -> fromMaybe (Json.fromString s))
 
 -- Generic decoders
-
-decodeError n = "Could not decode: '" ++ n ++ "'"
 
 decode : NamedDec a -> (a -> b) -> Decoder b
 decode (NDec x fa) g json = getProp x json >>= fa >>= (\a -> Success (g a))
