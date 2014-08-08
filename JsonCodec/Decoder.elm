@@ -69,15 +69,28 @@ fromString = (\s -> fromMaybe (Json.fromString s))
 
 -- Generic decoder --
 
-decode : NamedDec a -> (a -> b) -> Decoder b
-decode (NDec x fa) g json = getProp x json >>= fa >>= (\a -> Success (g a))
+decode1 : NamedDec a1 -> (a1 -> b) -> Decoder b
+decode1 (NDec x1 fa1) g json = 
+  getProp x1 json 
+  >>= fa1 >>= 
+  (\a1 -> Success (g a1))
 
-decode2 : NamedDec a -> NamedDec b -> (a -> b -> c) -> Decoder c
-decode2 (NDec x fa) (NDec y fb) g json =
-  getProp x json >>= fa >>= (\a -> getProp y json >>= fb >>= (\b -> Success (g a b)))
+decode2 : NamedDec a1 -> NamedDec a2 -> (a1 -> a2 -> b) -> Decoder b
+decode2 (NDec x1 fa1) (NDec x2 fa2) g json =
+  getProp x1 json 
+  >>= fa1 >>= 
+  (\a1 -> getProp x2 json 
+          >>= fa2 >>= 
+          (\a2 -> Success (g a1 a2)))
 
-decode3 : NamedDec a -> NamedDec b -> NamedDec c -> (a -> b -> c -> d) -> Decoder d
-decode3 (NDec x fa) (NDec y fb) (NDec z fc) g json =
-  getProp x json >>= fa >>= (\a -> getProp y json >>= fb >>= 
-                                   (\b -> getProp z json >>= fc >>= (\c -> Success (g a b c))))
+decode3 : NamedDec a1 -> NamedDec a2 -> NamedDec a3 -> (a1 -> a2 -> a3 -> b) -> Decoder b
+decode3 (NDec x1 fa1) (NDec x2 fa2) (NDec x3 fa3) g json =
+  getProp x1 json 
+  >>= fa1 >>= 
+  (\a1 -> getProp x2 json 
+          >>= fa2 >>= 
+          (\a2 -> getProp x3 json
+                  >>= fa3 >>= 
+                  (\a3 -> Success (g a1 a2 a3))))
 
+decode = decode1
