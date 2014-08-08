@@ -39,16 +39,11 @@ testdata3 = "[true,false]"
 print : Decoder a -> String -> Element
 print decoder s = fromString s `into` decoder |> asText
 
-main = flow down [ print person  testdata1    
-                 , print blogpost testdata2
-                 , print (listOf bool) testdata3 ]
+main = flow down [ print person  testdata1         -- Error ("Could not decode: \'profession\'")
+                 , print blogpost testdata2        -- Success { comments = [{ author = { age = 37, ... } ...}], ... }
+                 , print (listOf bool) testdata3 ] -- Success [True,False]
 ```
 
-This renders the following:
-
-    Error ("Could not decode: \'profession\'")
-    Success { comments = [{ author = { age = 37, name = "Jane", profession = "Aerospace Engineering" }, msg = "Hello" },{ author = { age = 37, name = "Tim", profession = "Wizard" }, msg = "Hello" }], content = "hello world" }
-    Success [True,False]
 
 ### Creating accessors and composing them with decoders
 
@@ -72,11 +67,6 @@ testdata2 = "{\"x\":{\"y\":{\"z\":42}}}"
 print : Decoder a -> String -> Element
 print decoder s = fromString s `into` decoder |> asText
 
-main = flow down [ print accessPerson testdata1 
-                 , print accessPerson testdata2 ]
+main = flow down [ print accessPerson testdata1   -- Success { age = 85, name = "Alice", ... }
+                 , print accessPerson testdata2 ] -- Error ("Could not access a \'name\' in \'Number 42\'")
 ```
-
-This renders the following:
-
-* `Success { age = 85, name = "Alice", profession = "Science" }`
-* `Error ("Could not access a \'name\' in \'Number 42\'")`
