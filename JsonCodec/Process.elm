@@ -1,6 +1,6 @@
 module JsonCodec.Process where
 
-{-| A Process represents what's going on with a codec.
+{-| A Process represents a passing from some input to a special `Output`.
 
 # Type and Constructors
 @docs Process
