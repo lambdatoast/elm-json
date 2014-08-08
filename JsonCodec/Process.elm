@@ -84,6 +84,16 @@ interpretedWith f g = (\a -> f a >>= (\b -> Success <| g b))
 successes : [Output a] -> [a]
 successes xs = foldl (\a b -> cata (\s -> b ++ [s]) (\_ -> b) a) [] xs
 
+{-| Collapse a list of endo-Processes, from the left.
+
+      isRightAnswer : Output Bool
+      isRightAnswer = let o = collapsel (Success 0) [ (\_ -> Success 21)
+                                                    , (\n -> Success <| n + 21)]
+                      in o `into` (\n -> Success <| n == 42)
+-}
+collapsel : Output a -> [Process a a] -> Output a
+collapsel ob xs = foldl (\p o -> o >>= p) ob xs 
+
 {-| Construct an `Output` from a `Maybe`.
 
       isRightAnswer : Maybe Int -> Output Bool
