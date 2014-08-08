@@ -22,10 +22,17 @@ not be accessed in the `Json.Value` `v`.
 accessorError : (String, Json.Value) -> Output Json.Value
 accessorError (k,v) = Error <| "Could not access a '" ++ k ++ "' in '" ++ (show v) ++ "'"
 
-delve : [String] -> Accessor
+{-| Given a list of property names, traverse the `Json.Object`.
+
+      isRightAnswer : Decoder Bool
+      isRightAnswer = delve [ "x", "y", "z" ] `glue` int `glue` (Success . ((==) 42))
+-}
+delve : [PropertyName] -> Accessor
 delve xs mv = collapsel (Success mv) (map getProp xs)
 
-getProp : String -> Accessor
+{-| Get the value of the property by the given name.
+-}
+getProp : PropertyName -> Accessor
 getProp n json = case json of
                   Json.Object d -> case (Dict.getOrElse Json.Null n d) of
                                      Json.Null -> accessorError (n,json)
@@ -50,10 +57,12 @@ data NamedDec a = NDec PropertyName (Decoder a)
 
 infixr 0 :=
 
--- Built-in decoders for convenience --
-
+{-| Create simple error message.
+-}
 decoderErrorMsg : String -> String
 decoderErrorMsg s = "Could not decode: '" ++ s ++ "'"
+
+-- Built-in decoders --
 
 string : Decoder String
 string v = case v of
