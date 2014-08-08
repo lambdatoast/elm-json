@@ -2,10 +2,10 @@
 
 Convenient and composable translation between JSON and Elm types, with helpful error messages.
 
-The main things this library provides are: 
+The main use cases of this library are:
 
-* Functions for creating composable and extensible JSON codecs
-* Functions for delving into the parts of a JSON that you care about.
+* Creating composable and extensible JSON codecs.
+* Decoding the bits of JSON that you actually care about.
 
 ## Decoding examples
 
