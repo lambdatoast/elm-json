@@ -1,9 +1,10 @@
 {
-    "version": "0.3.0",
+    "version": "0.3.1",
     "summary": "A library for convenient and composable translation between JSON and Elm types",
     "description": "This library provides functions for creating codecs that are composable and extensible, as well as simple inspection into the parts of a JSON object that are relevant to your program.",
     "license": "MIT",
     "exposed-modules": [
+        "Json.Accessor",
         "Json.Decoder",
         "Json.Process"
     ],
