@@ -81,3 +81,12 @@ mappedTo = flip map
 collapsel : Output a -> [Process a a] -> Output a
 collapsel ob xs = foldl (\p o -> o >>= p) ob xs 
 
+{-| Add two processes as disjunctive alternatives.
+If the first Process evaluates to an Error, the second Process will 
+be evaluated.
+-}
+or : Process a b -> Process a b -> Process a b
+or p1 p2 = (\a -> let o1 = p1 a
+                      p3 = (\a -> cata (\_ -> o1) (\_ -> p2 a) o1)
+                  in p3 a)
+
