@@ -80,7 +80,7 @@ decode1 : NamedDec a1 -> (a1 -> b) -> Decoder b
 decode1 (NDec x1 fa1) g json = 
   getVal x1 json 
   >>= fa1 >>= 
-  (\a1 -> Success (g a1))
+  process g
 
 decode2 : NamedDec a1 -> NamedDec a2 -> (a1 -> a2 -> b) -> Decoder b
 decode2 (NDec x1 fa1) (NDec x2 fa2) g json =
@@ -88,7 +88,7 @@ decode2 (NDec x1 fa1) (NDec x2 fa2) g json =
   >>= fa1 >>= 
   (\a1 -> getVal x2 json 
           >>= fa2 >>= 
-          (\a2 -> Success (g a1 a2)))
+          process (g a1))
 
 decode3 : NamedDec a1 -> NamedDec a2 -> NamedDec a3 -> (a1 -> a2 -> a3 -> b) -> Decoder b
 decode3 (NDec x1 fa1) (NDec x2 fa2) (NDec x3 fa3) g json =
@@ -98,6 +98,6 @@ decode3 (NDec x1 fa1) (NDec x2 fa2) (NDec x3 fa3) g json =
           >>= fa2 >>= 
           (\a2 -> getVal x3 json
                   >>= fa3 >>= 
-                  (\a3 -> Success (g a1 a2 a3))))
+                  process (g a1 a2)))
 
 decode = decode1
