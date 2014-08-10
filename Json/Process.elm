@@ -5,8 +5,11 @@ module Json.Process where
 # Creation
 @docs process
 
-# Composing Processes
-@docs from, into, (>>=), glue, (>>>), mappedTo
+# Composition
+@docs (>>>), mappedTo, or
+
+# Trasformation
+@docs from, into, (>>=), collapsel
 
 -}
 
