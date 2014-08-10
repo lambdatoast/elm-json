@@ -5,6 +5,9 @@ module Json.Decoder where
 # Type and Constructors
 @docs Decoder, fromString, (:=)
 
+# Built-in decoders
+@docs string, float, int, bool, listOf
+
 -}
 
 import List
