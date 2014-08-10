@@ -2,8 +2,8 @@ module Json.Process where
 
 {-| A Process represents a passing from some input to a special `Output`.
 
-# Type and Constructors
-@docs Process
+# Creation
+@docs process
 
 # Composing Processes
 @docs from, into, (>>=), glue, (>>>), mappedTo
@@ -14,6 +14,14 @@ import Json
 import Json.Output (..)
 
 type Process a b = a -> Output b
+
+{-| Create a `Process` from a function.
+
+      isRightAnswer : Process Float Bool
+      isRightAnswer = process floor >>> process ((==) 42)
+-}
+process : (a -> b) -> Process a b
+process f a = Success <| f a
 
 {-| Get an `Output b` from passing an `Output a` through a `Process a b`.
 
@@ -89,4 +97,3 @@ or : Process a b -> Process a b -> Process a b
 or p1 p2 = (\a -> let o1 = p1 a
                       p3 = (\a -> cata (\_ -> o1) (\_ -> p2 a) o1)
                   in p3 a)
-
