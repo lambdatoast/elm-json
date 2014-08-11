@@ -2,8 +2,8 @@ module Json.Output  where
 
 {-| Representation of output.
 
-# Type and Constructors
-@docs Output
+# Creation
+@docs output
 
 # Working with Output
 @docs cata, successes, fromMaybe
@@ -11,6 +11,12 @@ module Json.Output  where
 -}
 
 data Output a = Success a | Error String
+
+
+{-| Create an `Output` from a pure value.
+-}
+output : a -> Output a
+output = Success
 
 {-| Run the first given function if success, otherwise, the second given function.
 
