@@ -24,7 +24,7 @@ type Process a b = a -> Output b
       isRightAnswer = process floor >>> process ((==) 42)
 -}
 process : (a -> b) -> Process a b
-process f a = Success <| f a
+process f a = output <| f a
 
 {-| Get an `Output b` from passing an `Output a` through a `Process a b`.
 
@@ -72,7 +72,7 @@ glue f g = (\a -> f a >>= g)
       isRightAnswer = map (((==) 42) . floor) (process (\n -> 42.5))
 -}
 map : (b -> c) -> Process a b -> Process a c
-map f p = (\a -> p a >>= (\b -> Success (f b)))
+map f p = (\a -> p a >>= (\b -> output (f b)))
 
 {-| Same as `map`, but with the arguments interchanged.
 
@@ -85,7 +85,7 @@ mappedTo = flip map
 {-| Collapse a list of endo-Processes, from the left.
 
       isRightAnswer : Output Bool
-      isRightAnswer = let o = collapsel (Success 0) [ process (\_ -> 21)
+      isRightAnswer = let o = collapsel (output 0) [ process (\_ -> 21)
                                                     , process ((+) 21) ]
                       in o `into` process ((==) 42)
 -}
