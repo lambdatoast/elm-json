@@ -6,7 +6,7 @@ module Json.Process where
 @docs process
 
 # Composition
-@docs (>>>), mappedTo, or
+@docs (>>>), mappedTo, or, and, split
 
 # Trasformation
 @docs from, into, (>>=), collapsel
@@ -100,3 +100,16 @@ or : Process a b -> Process a b -> Process a b
 or p1 p2 = (\a -> let o1 = p1 a
                       p3 = (\a -> cata (\_ -> o1) (\_ -> p2 a) o1)
                   in p3 a)
+
+{-| Given two processes, make one with the respective input/output pairs.
+-}
+split : Process a b -> Process c d -> Process (a,c) (b,d)
+split pab pcd (a,c) =
+  let ob = pab a
+      od = pcd c
+  in ob >>= (\b -> od >>= process (\d -> (b,d)))
+
+{-| Pair the output of two processes on a given input.
+-}
+and : Process a b -> Process a c -> Process a (b,c)
+and pab pac = process (\a -> (a,a)) >>> (pab `split` pac)
