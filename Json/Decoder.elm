@@ -13,7 +13,7 @@ module Json.Decoder where
 import List
 import Json
 import Json.Process (..)
-import Json.Output (fromMaybe, Success, Error, successes)
+import Json.Output (fromMaybe, output, Error, successes)
 import Json.Accessor (..)
 
 {-| A Decoder is a Process that takes a Json.Value and produces some 
@@ -42,12 +42,12 @@ decoderErrorMsg s = "Could not decode: '" ++ s ++ "'"
 
 string : Decoder String
 string v = case v of
-                Json.String s -> Success s
+                Json.String s -> output s
                 _ -> Error <| decoderErrorMsg "{string}"
 
 float : Decoder Float
 float v = case v of
-                  Json.Number n -> Success n
+                  Json.Number n -> output n
                   _ -> Error <| decoderErrorMsg "{float}"
 
 int : Decoder Int
@@ -55,18 +55,18 @@ int = float `mappedTo` floor
 
 bool : Decoder Bool
 bool v = case v of
-                  Json.Boolean b -> Success b
+                  Json.Boolean b -> output b
                   _ -> Error <| decoderErrorMsg "{bool}"
 
 listOf : Decoder a -> Decoder [a]
 listOf f v = case v of
-                   Json.Array xs -> Success <| successes (List.map f xs)
+                   Json.Array xs -> output <| successes (List.map f xs)
                    _ -> Error <| decoderErrorMsg "{list}"
 
 {-| A Process from String to Json.Value for convenience.
 
       isRightAnswer : String -> Output Bool
-      isRightAnswer s = fromString s >>= int >>= (\n -> Success <| n == 42)
+      isRightAnswer s = fromString s >>= int >>= (\n -> output <| n == 42)
 -}
 fromString : Process String Json.Value
 fromString = (\s -> fromMaybe (Json.fromString s))

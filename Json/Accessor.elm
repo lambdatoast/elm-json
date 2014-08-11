@@ -32,10 +32,10 @@ type PropertyName = String
 {-| Given a list of property names, traverse the `Json.Object`.
 
       isRightAnswer : Decoder Bool
-      isRightAnswer = delve [ "x", "y", "z" ] `glue` int `glue` (Success . ((==) 42))
+      isRightAnswer = delve [ "x", "y", "z" ] `glue` int `glue` (output . ((==) 42))
 -}
 delve : [PropertyName] -> Accessor
-delve xs mv = collapsel (Success mv) (List.map getVal xs)
+delve xs mv = collapsel (output mv) (List.map getVal xs)
 
 {-| Get the value of the property by the given name.
 -}
@@ -43,6 +43,6 @@ getVal : PropertyName -> Accessor
 getVal n json = case json of
                   Json.Object d -> case (Dict.getOrElse Json.Null n d) of
                                      Json.Null -> accessorError (n,json)
-                                     v -> Success v
+                                     v -> output v
                   _ -> accessorError (n,json)
   
