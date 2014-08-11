@@ -101,13 +101,21 @@ or p1 p2 = (\a -> let o1 = p1 a
                       p3 = (\a -> cata (\_ -> o1) (\_ -> p2 a) o1)
                   in p3 a)
 
+{-| Process with input/output as pairs. First component is processed.
+-}
+first : Process a b -> Process (a,c) (b,c)
+first pab = (\(a,c) -> pab a >>= process (\b -> (b,c)))
+
+{-| Mirror image of `first`. Second component is processed.
+-}
+second : Process a b -> Process (c,a) (c,b)
+second pab = let swap (x,y) = (y,x)
+             in process swap >>> first pab >>> process swap 
+
 {-| Given two processes, make one with the respective input/output pairs.
 -}
 split : Process a b -> Process c d -> Process (a,c) (b,d)
-split pab pcd (a,c) =
-  let ob = pab a
-      od = pcd c
-  in ob >>= (\b -> od >>= process (\d -> (b,d)))
+split pab pcd = first pab >>> second pcd
 
 {-| Pair the output of two processes on a given input.
 -}
