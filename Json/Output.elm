@@ -18,6 +18,11 @@ data Output a = Success a | Error String
 output : a -> Output a
 output = Success
 
+{-| Create an error `Output` from a pure value.
+-}
+error : String -> Output a
+error = Error
+
 {-| Run the first given function if success, otherwise, the second given function.
 
       isRightAnswer : Output Int -> Bool

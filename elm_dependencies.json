@@ -1,5 +1,5 @@
 {
-    "version": "0.3.4",
+    "version": "0.4.0",
     "summary": "A library for convenient and composable translation between JSON and Elm types",
     "description": "This library provides functions for creating codecs that are composable and extensible, as well as simple inspection into the parts of a JSON object that are relevant to your program.",
     "license": "MIT",
@@ -8,7 +8,7 @@
         "Json.Decoder",
         "Json.Process"
     ],
-    "elm-version": "0.12.3",
+    "elm-version": "0.13",
     "dependencies": {},
     "repository": "https://github.com/lambdatoast/elm-json.git"
 }

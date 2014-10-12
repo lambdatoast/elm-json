@@ -13,13 +13,15 @@ module Json.Decoder where
 import List
 import Json
 import Json.Process (..)
-import Json.Output (fromMaybe, output, Error, successes)
+import Json.Output (fromMaybe, output, error, successes)
 import Json.Accessor (..)
 
 {-| A Decoder is a Process that takes a Json.Value and produces some 
 value `a`.
 -}
 type Decoder a = Process Json.Value a
+
+type PropertyName = String
 
 {-| A Decoder tagged with a property name, expected to be found in 
 a Json.Value.
@@ -43,12 +45,12 @@ decoderErrorMsg s = "Could not decode: '" ++ s ++ "'"
 string : Decoder String
 string v = case v of
                 Json.String s -> output s
-                _ -> Error <| decoderErrorMsg "{string}"
+                _ -> error <| decoderErrorMsg "{string}"
 
 float : Decoder Float
 float v = case v of
                   Json.Number n -> output n
-                  _ -> Error <| decoderErrorMsg "{float}"
+                  _ -> error <| decoderErrorMsg "{float}"
 
 int : Decoder Int
 int = float `mappedTo` floor
@@ -56,12 +58,12 @@ int = float `mappedTo` floor
 bool : Decoder Bool
 bool v = case v of
                   Json.Boolean b -> output b
-                  _ -> Error <| decoderErrorMsg "{bool}"
+                  _ -> error <| decoderErrorMsg "{bool}"
 
 listOf : Decoder a -> Decoder [a]
 listOf f v = case v of
                    Json.Array xs -> output <| successes (List.map f xs)
-                   _ -> Error <| decoderErrorMsg "{list}"
+                   _ -> error <| decoderErrorMsg "{list}"
 
 {-| A Process from String to Json.Value for convenience.
 
