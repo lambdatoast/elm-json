@@ -1,4 +1,4 @@
-module Json.Decoder where
+module Json.Decoder (fromString, decode2, decode3, (:=), string, float, int, bool, listOf, Decoder) where
 
 {-| Tools for translating JSON to Elm types.
 
@@ -20,8 +20,6 @@ import Json.Accessor (..)
 value `a`.
 -}
 type Decoder a = Process Json.Value a
-
-type PropertyName = String
 
 {-| A Decoder tagged with a property name, expected to be found in 
 a Json.Value.

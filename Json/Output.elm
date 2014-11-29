@@ -1,4 +1,11 @@
-module Json.Output  where
+module Json.Output
+  ( Output(Success, Error)
+  , output
+  , cata
+  , error
+  , fromMaybe
+  , successes
+  ) where
 
 {-| Representation of output.
 
