@@ -13,7 +13,7 @@ The main use cases of this library are:
 
 ```haskell
 import Json.Decoder (..)
-import Json.Process (fromString, into)
+import Json.Process (into)
 
 type Person = { name: String, age: Int, profession: String }
 type Comment = { msg: String, author: Person }
