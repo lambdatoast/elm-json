@@ -1,5 +1,7 @@
 # JSON in Elm
 
+**NOTE: This package is deprecated in favor of the core library one ([Json.Decode](http://package.elm-lang.org/packages/elm-lang/core/1.1.0/Json-Decode), [Json.Encode](http://package.elm-lang.org/packages/elm-lang/core/1.1.0/Json-Encode)) which it [inspired](http://elm-lang.org/blog/announce/0.14.elm#making-json-easier)**
+
 Convenient and composable translation between JSON and Elm types, with helpful error messages.
 
 The main use cases of this library are:
