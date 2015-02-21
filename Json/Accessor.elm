@@ -1,4 +1,4 @@
-module Json.Accessor (delve, getVal) where
+module Json.Accessor (delve, getVal, PropertyName) where
 
 {-| An accesor is a `Process` that is used for moving through the Json 
 structure. Accessors and decoders are both processes, so they automatically 
